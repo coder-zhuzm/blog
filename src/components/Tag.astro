@@ -1,0 +1,21 @@
+---
+interface Props {
+  tag: string;
+  tagName?: string;
+  size?: 'sm' | 'lg';
+}
+
+const { tag, tagName = tag, size = 'sm' } = Astro.props;
+---
+
+<li class="inline-block">
+  <a
+    href={`/tags/${tag}/`}
+    class:list={[
+      'inline-block rounded border border-border px-2 py-1 hover:text-accent',
+      size === 'lg' ? 'text-base' : 'text-sm',
+    ]}
+  >
+    {tagName}
+  </a>
+</li>

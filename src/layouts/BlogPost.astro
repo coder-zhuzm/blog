@@ -1,86 +1,88 @@
 ---
-import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
+import { render, type CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
+import BackToTopButton from '../components/BackToTopButton.astro';
+import Datetime from '../components/Datetime.astro';
+import EditPost from '../components/EditPost.astro';
 import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import ShareLinks from '../components/ShareLinks.astro';
+import Tag from '../components/Tag.astro';
+import { SITE } from '../consts';
+import { slugifyStr } from '../utils/slugify';
 
-type Props = CollectionEntry<'blog'>['data'];
+export interface Props {
+  post: CollectionEntry<'blog'> | CollectionEntry<'notes'>;
+  posts?: CollectionEntry<'blog'>[];
+}
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { post, posts = [] } = Astro.props;
+const { Content } = await render(post);
+
+const allPosts = posts.map(({ data: { title }, id }) => ({ slug: id, title }));
+const currentPostIndex = allPosts.findIndex(item => item.slug === post.id);
+const prevPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
+const nextPost = currentPostIndex >= 0 && currentPostIndex < allPosts.length - 1 ? allPosts[currentPostIndex + 1] : null;
+const isBlog = post.collection === 'blog';
+const backHref = isBlog ? '/blog' : '/notes';
+const ogImage = isBlog && !post.data.heroImage ? `/blog/${post.id}/index.png` : post.data.heroImage;
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
-
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead title={`${post.data.title} | ${SITE.title}`} description={post.data.description} image={ogImage} />
+  </head>
+  <body>
+    <Header />
+    <main id="main-content" class="mx-auto w-full max-w-app px-4 pb-12">
+      <a href={backHref} class="inline-block text-sm underline decoration-dashed underline-offset-4 hover:text-accent">
+        返回列表
+      </a>
+      <h1 class="mt-6 inline-block text-2xl font-bold text-accent sm:text-3xl">{post.data.title}</h1>
+      <div class="flex items-center gap-4">
+        <Datetime pubDate={post.data.pubDate} modDate={post.data.updatedDate} className="my-2" />
+        {isBlog && <EditPost post={post} hideEditPost={post.data.hideEditPost} class="my-2" />}
+      </div>
+      <article class="prose mx-auto mt-8 max-w-app">
+        <Content />
+      </article>
+      {
+        isBlog && (
+          <>
+            <hr class="my-8 border-dashed" />
+            <ul class="mb-8 flex flex-wrap gap-2">
+              {(post.data.tags ?? []).map(tag => (
+                <Tag tag={slugifyStr(tag)} tagName={tag} />
+              ))}
+            </ul>
+            <BackToTopButton />
+            <ShareLinks />
+          </>
+        )
+      }
+      {
+        isBlog && (prevPost || nextPost) && (
+          <>
+            <hr class="my-6 border-dashed" />
+            <div class="grid grid-cols-1 gap-6 text-sm sm:grid-cols-2">
+              {prevPost && (
+                <a href={`/blog/${prevPost.slug}/`} class="hover:opacity-75">
+                  <span>上一篇</span>
+                  <div class="text-accent/85">{prevPost.title}</div>
+                </a>
+              )}
+              {nextPost && (
+                <a href={`/blog/${nextPost.slug}/`} class="text-right hover:opacity-75 sm:col-start-2">
+                  <span>下一篇</span>
+                  <div class="text-accent/85">{nextPost.title}</div>
+                </a>
+              )}
+            </div>
+          </>
+        )
+      }
+    </main>
+    <Footer />
+  </body>
 </html>

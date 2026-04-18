@@ -1,0 +1,76 @@
+---
+import '@pagefind/default-ui/css/ui.css';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Main from '../layouts/Main.astro';
+import { SITE } from '../consts';
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead title={`${SITE.title} | 搜索`} description="搜索博客与笔记内容。" />
+  </head>
+  <body>
+    <Header />
+    <Main props={{ pageTitle: '搜索', pageDesc: '搜索博客与笔记内容。' }}>
+      <div id="pagefind-search"></div>
+    </Main>
+    <Footer />
+  </body>
+</html>
+
+<script>
+  function initSearch() {
+    const pageFindSearch = document.querySelector("#pagefind-search");
+    if (!pageFindSearch) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const onIdle = window.requestIdleCallback || (cb => setTimeout(cb, 1));
+
+    onIdle(async () => {
+      const { PagefindUI } = await import("@pagefind/default-ui");
+
+      if (import.meta.env.DEV) {
+        pageFindSearch.innerHTML = `
+          <div class="bg-muted/75 rounded p-4 space-y-4 mb-4">
+            <p><strong>开发模式提示：</strong>请至少先执行一次 \`pnpm build\`，搜索索引才会生成。</p>
+          </div>
+        `;
+      }
+
+      const search = new PagefindUI({
+        element: "#pagefind-search",
+        showSubResults: true,
+        showImages: false,
+        processTerm: function (term) {
+          params.set("q", term);
+          history.replaceState(history.state, "", "?" + params.toString());
+          return term;
+        },
+      });
+
+      const query = params.get("q");
+      if (query) search.triggerSearch(query);
+    });
+  }
+
+  initSearch();
+  document.addEventListener("astro:after-swap", initSearch);
+</script>
+
+<style is:global>
+  #pagefind-search {
+    --pagefind-ui-text: var(--foreground);
+    --pagefind-ui-background: var(--background);
+    --pagefind-ui-border: var(--border);
+    --pagefind-ui-primary: var(--accent);
+    --pagefind-ui-border-radius: 0.375rem;
+    --pagefind-ui-border-width: 1px;
+  }
+
+  #pagefind-search .pagefind-ui__result-title a {
+    color: var(--accent);
+  }
+</style>

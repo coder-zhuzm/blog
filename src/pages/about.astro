@@ -1,11 +1,30 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Main from '../layouts/Main.astro';
+import { SITE } from '../consts';
 ---
 
-<Layout
-	title="关于我"
-	description="在这里填写关于页面的描述"
-	pubDate={new Date()}
->
-	<!-- 在这里填写关于我的内容 -->
-</Layout>
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead title={`${SITE.title} | 关于`} description="关于本站的定位与内容范围。" />
+  </head>
+  <body>
+    <Header />
+    <Main props={{ pageTitle: '关于', pageDesc: '记录个人的技术背景、当前关注方向与本站的写作边界。' }}>
+      <div class="prose">
+        <h2>技术背景</h2>
+        <p>我目前的主要工作背景仍然以前端开发为起点，长期关注 React、Node.js 与实际业务场景中的工程实现。公开信息中，我也持续把企业微信生态开发、安卓 RPA 自动化与 AI 提效相关的实践放在较高优先级。</p>
+        <h2>当前关注</h2>
+        <p>这段时间的重点放在两个方向：一是把 AI 更稳定地嵌入开发与日常工作流，提升真实场景下的交付效率；二是在原有前端与 Node.js 经验的基础上，继续补齐 Java 后端与更完整的全栈能力。</p>
+        <h2>写作范围</h2>
+        <p>博客部分主要收录相对完整的技术文章，重点是问题定义、方案拆解、工程实践与方法整理；笔记部分用于保存阶段性的研究材料、工作记录与尚未扩展成正式文章的内容。</p>
+        <h2>公开入口</h2>
+        <p>如果你想了解我最近的公开表达，可以从 <a href="https://x.com/coder_zhuzm" target="_blank" rel="noreferrer">X</a> 查看我对技术方向与工作关注点的即时记录，也可以从 <a href="https://github.com/coder-zhuzm" target="_blank" rel="noreferrer">GitHub</a> 查看我的代码与项目输出。</p>
+      </div>
+    </Main>
+    <Footer />
+  </body>
+</html>

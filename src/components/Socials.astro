@@ -1,0 +1,16 @@
+---
+import { SITE } from '../consts';
+---
+
+<div class="flex flex-wrap items-center gap-3">
+  {SITE.socialLinks.map(item => (
+    <a
+      href={item.href}
+      target="_blank"
+      rel="noreferrer"
+      class="text-sm underline decoration-dashed underline-offset-4 hover:text-accent"
+    >
+      {item.label}
+    </a>
+  ))}
+</div>

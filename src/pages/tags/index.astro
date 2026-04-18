@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import Tag from '../../components/Tag.astro';
+import Main from '../../layouts/Main.astro';
+import { SITE } from '../../consts';
+import { getUniqueTags } from '../../utils/tags';
+
+const posts = (await getCollection('blog')).filter(post => !post.data.draft);
+const tags = getUniqueTags(posts);
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead title={`${SITE.title} | 标签`} description="浏览博客中使用的全部标签。" />
+  </head>
+  <body>
+    <Header />
+    <Main props={{ pageTitle: '标签', pageDesc: '浏览博客中使用的全部标签。' }}>
+      <ul class="flex flex-wrap gap-3">
+        {tags.map(({ tag, tagName }) => <Tag tag={tag} tagName={tagName} size="lg" />)}
+      </ul>
+    </Main>
+    <Footer />
+  </body>
+</html>

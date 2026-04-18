@@ -1,0 +1,11 @@
+---
+interface Props {
+  noPadding?: boolean;
+}
+
+const { noPadding = false } = Astro.props;
+---
+
+<div class:list={["w-full", { "py-6": !noPadding }]}>
+  <hr class="border-border border-dashed" />
+</div>

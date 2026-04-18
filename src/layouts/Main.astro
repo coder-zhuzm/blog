@@ -1,0 +1,18 @@
+---
+interface StringTitleProp {
+  pageTitle: string;
+  pageDesc?: string;
+}
+
+export interface Props {
+  props: StringTitleProp;
+}
+
+const { props } = Astro.props;
+---
+
+<main id="main-content" class="mx-auto w-full max-w-app px-4 pb-4">
+  <h1 class="text-2xl font-semibold sm:text-3xl">{props.pageTitle}</h1>
+  {props.pageDesc && <p class="mt-2 mb-6 italic">{props.pageDesc}</p>}
+  <slot />
+</main>

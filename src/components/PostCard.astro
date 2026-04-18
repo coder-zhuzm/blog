@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Datetime from './Datetime.astro';
+
+interface Props {
+  entry: CollectionEntry<'blog'> | CollectionEntry<'notes'>;
+  href: string;
+  variant?: 'h2' | 'h3';
+}
+
+const { entry, href, variant = 'h2' } = Astro.props;
+const HeaderTag = variant;
+---
+
+<li class="my-6">
+  <a
+    href={href}
+    class="inline-block text-lg font-medium text-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
+  >
+    <HeaderTag class="text-lg font-medium decoration-dashed hover:underline">{entry.data.title}</HeaderTag>
+  </a>
+  <Datetime pubDate={entry.data.pubDate} modDate={entry.data.updatedDate} />
+  <p>{entry.data.description}</p>
+</li>

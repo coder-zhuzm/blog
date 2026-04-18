@@ -1,5 +1,36 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
-
-export const SITE_TITLE = 'zhuzm Blog';
-export const SITE_DESCRIPTION = '欢迎来到我的博客!';
+export const SITE = {
+	title: 'zhuzm Blog',
+	description: '记录技术实践、方法研究与阶段性工作笔记。',
+	website: 'https://blog.zhuzm.icu',
+	author: 'zhuzm',
+	profile: 'https://github.com/coder-zhuzm',
+	ogImage: 'og.png',
+	lang: 'zh-CN',
+	timezone: 'Asia/Shanghai',
+	postPerIndex: 4,
+	postPerPage: 6,
+	showArchives: true,
+	showBackButton: true,
+	lightAndDarkMode: true,
+	dynamicOgImage: true,
+	editPost: {
+		enabled: true,
+		url: 'https://github.com/coder-zhuzm/blog/edit/main/',
+	},
+	hero: {
+		title: '技术实践、方法研究与工作笔记',
+		body: '本站以中文内容为主，记录软件开发、流程设计与阶段性研究材料，重点关注可复用的方法与长期问题的整理。',
+	},
+	navLinks: [
+		{ href: '/blog', label: '博客' },
+		{ href: '/notes', label: '笔记' },
+		{ href: '/tags', label: '标签' },
+		{ href: '/archives', label: '归档' },
+		{ href: '/search', label: '搜索' },
+		{ href: '/about', label: '关于' },
+	],
+	socialLinks: [
+		{ href: 'https://x.com/coder_zhuzm', label: 'X' },
+		{ href: 'https://github.com/coder-zhuzm', label: 'GitHub' },
+	],
+} as const;

@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { SITE } from '../consts';
+
+export interface Props {
+  hideEditPost?: boolean;
+  class?: string;
+  post: CollectionEntry<'blog'>;
+}
+
+const { hideEditPost, post, class: className = '' } = Astro.props;
+const href = `${SITE.editPost.url}${post.filePath}`;
+const showEditPost = SITE.editPost.enabled && !hideEditPost && href.trim() !== '';
+---
+
+{
+  showEditPost && (
+    <div class:list={['opacity-80', className]}>
+      <a class="space-x-1.5 hover:opacity-75" href={href} rel="noopener noreferrer" target="_blank">
+        <span class="italic max-sm:text-sm sm:inline">编辑本文</span>
+      </a>
+    </div>
+  )
+}

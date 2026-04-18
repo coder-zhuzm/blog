@@ -1,21 +1,62 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import Hr from '../components/Hr.astro';
+import PostCard from '../components/PostCard.astro';
+import Socials from '../components/Socials.astro';
+import { SITE } from '../consts';
+
+const posts = (await getCollection('blog'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const notes = (await getCollection('notes')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const recentPosts = posts.slice(0, SITE.postPerIndex);
+const recentNotes = notes.slice(0, 3);
 ---
 
 <!doctype html>
-<html lang="zh-CN">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>欢迎来到我的博客</h1>
-			<p>这里是我记录技术、分享心得的地方。</p>
-		</main>
-		<Footer />
-	</body>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead title={SITE.title} description={SITE.description} />
+  </head>
+  <body>
+    <Header />
+    <main id="main-content" class="mx-auto w-full max-w-app px-4 pb-12">
+      <section class="pt-8 pb-6">
+        <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">{SITE.hero.title}</h1>
+        <p>{SITE.hero.body}</p>
+        <div class="mt-4 flex flex-col sm:flex-row sm:items-center">
+          <div class="me-2 mb-1 whitespace-nowrap sm:mb-0">相关链接:</div>
+          <Socials />
+        </div>
+      </section>
+
+      <Hr />
+
+      <section class="pt-12 pb-6">
+        <div class="flex items-center justify-between gap-4">
+          <h2 class="text-2xl font-semibold tracking-wide">最新文章</h2>
+          <a href="/blog/" class="text-sm underline decoration-dashed underline-offset-4 hover:text-accent">全部博客</a>
+        </div>
+        <ul>
+          {recentPosts.map((entry, index) => <PostCard entry={entry} href={`/blog/${entry.id}/`} variant={index === 0 ? 'h2' : 'h3'} />)}
+        </ul>
+      </section>
+
+      <Hr />
+
+      <section class="pt-12 pb-6">
+        <div class="flex items-center justify-between gap-4">
+          <h2 class="text-2xl font-semibold tracking-wide">笔记</h2>
+          <a href="/notes/" class="text-sm underline decoration-dashed underline-offset-4 hover:text-accent">全部笔记</a>
+        </div>
+        <ul>
+          {recentNotes.map(entry => <PostCard entry={entry} href={`/notes/${entry.id}/`} variant="h3" />)}
+        </ul>
+      </section>
+    </main>
+    <Footer />
+  </body>
 </html>

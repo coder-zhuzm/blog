@@ -1,0 +1,46 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import PostCard from '../../components/PostCard.astro';
+import Main from '../../layouts/Main.astro';
+import { SITE } from '../../consts';
+import { getPostsByTag, getUniqueTags } from '../../utils/tags';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')).filter(post => !post.data.draft);
+  return getUniqueTags(posts).map(({ tag, tagName }) => ({
+    params: { tag },
+    props: {
+      tag,
+      tagName,
+      posts: getPostsByTag(posts, tag),
+    },
+  }));
+}
+
+type Props = {
+  tag: string;
+  tagName: string;
+  posts: CollectionEntry<'blog'>[];
+};
+
+const { tagName, posts } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead title={`${SITE.title} | 标签: ${tagName}`} description={`浏览标签“${tagName}”下的全部文章。`} />
+  </head>
+  <body>
+    <Header />
+    <Main props={{ pageTitle: `标签: ${tagName}`, pageDesc: `浏览标签“${tagName}”下的全部文章。` }}>
+      <ul>
+        {posts.map(entry => <PostCard entry={entry} href={`/blog/${entry.id}/`} variant="h2" />)}
+      </ul>
+    </Main>
+    <Footer />
+  </body>
+</html>

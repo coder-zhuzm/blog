@@ -1,0 +1,20 @@
+---
+interface Props {
+  pubDate: Date;
+  modDate?: Date;
+  className?: string;
+}
+
+const { pubDate, modDate, className = '' } = Astro.props;
+
+const formatter = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<div class:list={['text-sm italic opacity-80', className]}>
+  <time datetime={pubDate.toISOString()}>{formatter.format(pubDate)}</time>
+  {modDate && <span> · 更新于 {formatter.format(modDate)}</span>}
+</div>

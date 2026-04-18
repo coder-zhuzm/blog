@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import PostCard from '../components/PostCard.astro';
+import Main from '../layouts/Main.astro';
+import { SITE } from '../consts';
+
+const posts = (await getCollection('blog'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const groupedByYear = Object.entries(
+  Object.groupBy(posts, post => String(post.data.pubDate.getFullYear()))
+).sort(([a], [b]) => Number(b) - Number(a));
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead title={`${SITE.title} | 归档`} description="按年份归档所有博客文章。" />
+  </head>
+  <body>
+    <Header />
+    <Main props={{ pageTitle: '归档', pageDesc: '按年份整理博客文章。' }}>
+      {
+        groupedByYear.map(([year, yearPosts]) => (
+          <section class="mb-8">
+            <span class="text-2xl font-bold">{year}</span>
+            <sup class="text-sm ms-1">{yearPosts?.length ?? 0}</sup>
+            <ul>
+              {(yearPosts ?? []).map(entry => <PostCard entry={entry} href={`/blog/${entry.id}/`} variant="h3" />)}
+            </ul>
+          </section>
+        ))
+      }
+    </Main>
+    <Footer />
+  </body>
+</html>

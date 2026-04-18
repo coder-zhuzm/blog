@@ -2,41 +2,26 @@
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import PostCard from '../../components/PostCard.astro';
+import Main from '../../layouts/Main.astro';
+import { SITE } from '../../consts';
 
-const notes = (await getCollection('notes')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const notes = (await getCollection('notes')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={`${SITE_TITLE} | Notes`} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<h1>Notes</h1>
-				<p>这里放方法文档、工作笔记和仍在迭代中的思路。</p>
-				<ul>
-					{
-						notes.map((note) => (
-							<li>
-								<a href={`/notes/${note.id}/`}>
-									<h2>{note.data.title}</h2>
-									<p>{note.data.description}</p>
-									<p><FormattedDate date={note.data.pubDate} /></p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead title={`${SITE.title} | 笔记`} description="收录工作过程中的阶段性笔记与研究材料。" />
+  </head>
+  <body>
+    <Header />
+    <Main props={{ pageTitle: '笔记', pageDesc: '整理阶段性研究材料、工作笔记与尚未扩展为正式文章的内容。' }}>
+      <ul>
+        {notes.map(entry => <PostCard entry={entry} href={`/notes/${entry.id}/`} variant="h2" />)}
+      </ul>
+    </Main>
+    <Footer />
+  </body>
 </html>
