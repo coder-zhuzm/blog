@@ -13,18 +13,25 @@ import ThemeToggle from './ThemeToggle.astro';
   >
     跳转到正文
   </a>
-  <div class="mx-auto flex max-w-app flex-col items-center justify-between sm:flex-row">
-    <div class="relative flex w-full items-baseline justify-between bg-background py-4 sm:items-center sm:py-6">
-      <a href="/" class="py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:text-2xl sm:leading-none">
-        {SITE.title}
-      </a>
-      <nav class="flex items-center gap-5 text-sm sm:text-base">
+  <div class="mx-auto max-w-app">
+    <div class="relative flex w-full flex-col gap-2 bg-background py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:py-6">
+      <div class="flex items-center justify-between sm:contents">
+        <a href="/" class="block w-fit py-1 text-xl leading-none font-semibold whitespace-nowrap sm:text-2xl">
+          {SITE.title}
+        </a>
+        <div class="sm:hidden">
+          {SITE.lightAndDarkMode && <ThemeToggle />}
+        </div>
+      </div>
+      <nav class="flex flex-wrap items-center justify-start gap-x-3 gap-y-2 pl-0 text-[0.95rem] sm:flex-nowrap sm:justify-end sm:gap-5 sm:pl-0 sm:text-base">
         {SITE.navLinks.map(item => (
           <HeaderLink href={item.href} class="font-medium hover:text-accent">
             {item.label}
           </HeaderLink>
         ))}
-        {SITE.lightAndDarkMode && <ThemeToggle />}
+        <div class="hidden sm:block">
+          {SITE.lightAndDarkMode && <ThemeToggle />}
+        </div>
       </nav>
     </div>
   </div>
