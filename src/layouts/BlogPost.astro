@@ -44,7 +44,7 @@ const ogImage = isBlog && !post.data.heroImage ? `/blog/${post.id}/index.png` : 
         <Datetime pubDate={post.data.pubDate} modDate={post.data.updatedDate} className="my-2" />
         {isBlog && <EditPost post={post} hideEditPost={post.data.hideEditPost} class="my-2" />}
       </div>
-      <article class="prose mx-auto mt-8 max-w-app">
+      <article class="prose mx-auto mt-8 max-w-app font-sans">
         <Content />
       </article>
       {
